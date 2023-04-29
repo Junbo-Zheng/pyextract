@@ -1,6 +1,8 @@
 # Python Extract Files
 
-Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path.
+Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path. Also, all the suffix with `.gz` files will be unzipped at the same time.
+
+One more things, `pyextract` supports merging all extracted files into one new file. By default, the name of the merged file is **paste_new_file**, you can modify it with the `--paste_new_file` option.
 
 For example, a compressed package(named `123456_abc.tar.gz`) that stores the other compressed packages and files, as follows:
 
@@ -23,11 +25,12 @@ Additionally, the files in the `.tar.gz` package are compressed packages with `.
 # Usage
 
 ```Python
-➜  /Users/junbozheng/project/pyextract git:(master) ./pyextract.py --help
+➜  /Users/junbozheng/project/pyextract git:(paste) ✗ ./pyextract.py --help
 Parameter Number : 2
 Parameter Lists  : ['./pyextract.py', '--help']
 Shell Name       : ./pyextract.py
-usage: pyextract.py [-h] [--output_path OUTPUT_PATH [OUTPUT_PATH ...]] [--password PASSWORD [PASSWORD ...]] [--source_path SOURCE_PATH [SOURCE_PATH ...]] --filename FILENAME [--keep_source_file]
+usage: pyextract.py [-h] [--output_path OUTPUT_PATH [OUTPUT_PATH ...]] [--password PASSWORD [PASSWORD ...]] [--source_path SOURCE_PATH [SOURCE_PATH ...]]
+                    [--paste_new_file PASTE_NEW_FILE [PASTE_NEW_FILE ...]] --filename FILENAME [--keep_source_file]
 
 Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path.
 
@@ -39,6 +42,8 @@ optional arguments:
                         extract packet and chmod with user password
   --source_path SOURCE_PATH [SOURCE_PATH ...]
                         extract packet source packet
+  --paste_new_file PASTE_NEW_FILE [PASTE_NEW_FILE ...]
+                        extract packet and paste to a new file
   --filename FILENAME   extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz
   --keep_source_file    keep source file in local path, copy to a new file without remove it if is true
 ```

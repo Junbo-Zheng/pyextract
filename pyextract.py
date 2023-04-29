@@ -14,6 +14,7 @@ remote_path = "/sdcard/Android/data/com.mi.health/files/log/devicelog"
 local_path = "Downloads"
 output_path = "./file"
 output_file = "file.tar.gz"
+paste_new_file = "./paste_new_file"
 
 tmp_log = "tmp.log"
 
@@ -23,6 +24,31 @@ def get_full_path(path):
         for file in files:
             if file == tmp_log:
                 return os.path.join(root, file)
+
+
+def remove_all_suffix_gz_file(path):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if os.path.splitext(file)[-1] == ".gz":
+                os.remove(os.path.join(root, file))
+
+
+def paste_all_file(path, args):
+    file_list = os.listdir(path)
+    file_list.sort()
+    print("prepare to paste file list %s" % file_list)
+
+    if os.path.exists(args.paste_new_file):
+        print("file exit and remove")
+        os.remove(args.paste_new_file)
+
+    cmd = "cat "
+    for file in file_list:
+        cmd += os.path.join(path, file) + " "
+
+    cmd += ">" + " " + args.paste_new_file
+    print("cmd %s" % cmd)
+    os.system(cmd)
 
 
 def pull_from_source_path(args):
@@ -115,6 +141,11 @@ if __name__ == '__main__':
                            nargs='+',
                            default=local_path,
                            help="extract packet source packet")
+    arg_parse.add_argument('--paste_new_file',
+                           type=str,
+                           nargs='+',
+                           default=paste_new_file,
+                           help="extract packet and paste to a new file")
     arg_parse.add_argument(
         '--filename',
         type=str,
@@ -164,3 +195,9 @@ if __name__ == '__main__':
 
     # gunzip all *.gz files under path
     gunzip_all(path)
+
+    # remove unused .gz files
+    remove_all_suffix_gz_file(path)
+
+    # paste all file to a new file
+    paste_all_file(path, args)
