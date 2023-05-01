@@ -21,6 +21,22 @@ Ths compressed package suffix name must be with `.tar.gz`.
 
 Additionally, the files in the `.tar.gz` package are compressed packages with `.gz` as the suffix, and include a specific file, used to help us find the path where the `.gz` file located. We assume it is called `tmp.log`, which is free and you can modify it according to you want.
 
+# Getting Started
+Clone the repo to local
+```Shell
+git clone https://github.com/Junbo-Zheng/pyextract
+```
+## set alias to local bash
+- zsh
+```Shell
+echo "alias pyextract=\'$(pwd)/pyextract.py\'" >> ~/.zshrc
+source ~/.zshrc
+```
+- bash
+```Shell
+echo "alias pyextract=\'$(pwd)/pyextract.py\'" >> ~/.bashrc
+source ~/.bashrc
+```
 
 # Usage
 
