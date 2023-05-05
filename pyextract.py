@@ -52,13 +52,13 @@ def paste_all_file(path, args):
 
 
 def pull_from_source_path(args):
-    if (args.source_path == "phone"):
+    if (args.source_path[0] == "phone"):
         args.source_path = remote_path
         adb_cmd = "adb pull " + args.source_path + " " + "./"
         print(adb_cmd)
         os.system(adb_cmd)
 
-        file = os.getcwd() + "/devicelog/**/" + args.filename[0] + "*.tar*.gz"
+        file = os.getcwd() + "/devicelog/**/" + "*" + args.filename[0] + "*.tar*.gz"
         result = glob.glob(file, recursive=True)
         print("glob result is %s" % result)
         result = glob.glob(file, recursive=True)
