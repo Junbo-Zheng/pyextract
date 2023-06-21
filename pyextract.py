@@ -65,7 +65,7 @@ def pull_from_source_path(args):
     else:
         path = os.path.join(
             os.environ['HOME'], "Downloads"
-        ) if args.source_path == "Downloads" else args.source_path
+        ) if args.source_path[0] == "Downloads" else args.source_path[0]
         file = path + "/" + "*" + args.filename[0] + "*.tar*.gz"
         result = glob.glob(file)
 
