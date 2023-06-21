@@ -6,6 +6,7 @@ import sys
 import os
 import gzip
 import glob
+import re
 
 import argparse
 
@@ -15,6 +16,7 @@ local_path = "Downloads"
 output_path = "./file"
 output_file = "file.tar.gz"
 paste_new_file = "./paste_new_file"
+default_file_pattern = "log\\d*|tmp.log"
 
 tmp_log = "tmp.log"
 
@@ -44,6 +46,8 @@ def paste_all_file(path, args):
 
     cmd = "cat "
     for file in file_list:
+        if re.match(args.file_pattern, file) is None:
+            continue
         cmd += os.path.join(path, file) + " "
 
     cmd += ">" + " " + args.paste_new_file
@@ -159,6 +163,11 @@ if __name__ == '__main__':
         'keep source file in local path, copy to a new file without remove it if is true',
         action='store_true',
         default=False)
+    arg_parse.add_argument(
+        '--filter_pattern',
+        type=str,
+        default=default_file_pattern,
+        help='filter the files to be merged')
 
     args = arg_parse.parse_args()
 
