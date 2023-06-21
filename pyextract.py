@@ -10,21 +10,26 @@ import re
 
 import argparse
 
-password = "123456"
-remote_path = "/sdcard/Android/data/com.mi.health/files/log/devicelog"
-local_path = "Downloads"
-output_path = "./file"
-output_file = "file.tar.gz"
-paste_new_file = "./paste_new_file"
-default_file_pattern = "log\\d*|tmp.log"
 
-tmp_log = "tmp.log"
+class DefaultCLIParameters:
+    def __init__(self):
+        self.password = "123456"
+        self.remote_path = "/sdcard/Android/data/com.mi.health/files/log/devicelog"
+        self.local_path = 'Downloads'
+        self.output_path = "./file"
+        self.output_file = "file.tar.gz"
+        self.merge_file = "./merged.log"
+        self.filter_pattern = "log\\d*|tmp.log"
+        self.tmp_log = "tmp.log"
+
+
+default_cli_parameters = DefaultCLIParameters()
 
 
 def get_full_path(path):
     for root, dirs, files in os.walk(path):
         for file in files:
-            if file == tmp_log:
+            if file == default_cli_parameters.tmp_log:
                 return os.path.join(root, file)
 
 
@@ -35,7 +40,7 @@ def remove_all_suffix_gz_file(path):
                 os.remove(os.path.join(root, file))
 
 
-def paste_all_file(path, args):
+def merge_logfiles(path, args):
     file_list = os.listdir(path)
     file_list.sort()
     print("prepare to paste file list %s" % file_list)
@@ -46,7 +51,7 @@ def paste_all_file(path, args):
 
     cmd = "cat "
     for file in file_list:
-        if re.match(args.file_pattern, file) is None:
+        if re.match(args.filter_pattern, file) is None:
             continue
         cmd += os.path.join(path, file) + " "
 
@@ -57,7 +62,7 @@ def paste_all_file(path, args):
 
 def pull_from_source_path(args):
     if (args.source_path[0] == "phone"):
-        args.source_path = remote_path
+        args.source_path = default_cli_parameters.remote_path
         adb_cmd = "adb pull " + args.source_path + " " + "./"
         print(adb_cmd)
         os.system(adb_cmd)
@@ -67,11 +72,11 @@ def pull_from_source_path(args):
         print("glob result is %s" % result)
         result = glob.glob(file, recursive=True)
     else:
-        path = os.path.join(
+        root_path = os.path.join(
             os.environ['HOME'], "Downloads"
         ) if args.source_path[0] == "Downloads" else args.source_path[0]
-        file = path + "/" + "*" + args.filename[0] + "*.tar*.gz"
-        result = glob.glob(file)
+        pattern = root_path + "/" + "*" + args.filename[0] + "*.tar*.gz"
+        result = glob.glob(pattern)
 
     print("glob result %s" % result)
 
@@ -85,7 +90,7 @@ def pull_from_source_path(args):
         file = result[0]
 
     path, unused = os.path.split(file)
-    output = args.filename[0] + "_" + output_file
+    output = args.filename[0] + "_" + default_cli_parameters.output_file
     output = os.path.join(path, output)
 
     if (args.keep_source_file):
@@ -130,43 +135,43 @@ if __name__ == '__main__':
         description=
         "Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path."
     )
-    arg_parse.add_argument('--output_path',
+    arg_parse.add_argument('-o', '--output_path',
                            type=str,
                            nargs='+',
-                           default=output_path,
+                           default=default_cli_parameters.output_path,
                            help="extract packet output path")
-    arg_parse.add_argument('--password',
+    arg_parse.add_argument('-P', '--password',
                            type=str,
                            nargs='+',
-                           default=password,
+                           default=default_cli_parameters.password,
                            help="extract packet and chmod with user password")
-    arg_parse.add_argument('--source_path',
+    arg_parse.add_argument('-i', '--source_path',
                            type=str,
                            nargs='+',
-                           default=local_path,
+                           default=default_cli_parameters.local_path,
                            help="extract packet source packet")
-    arg_parse.add_argument('--paste_new_file',
+    arg_parse.add_argument('-O', '--paste_new_file',
                            type=str,
                            nargs='+',
-                           default=paste_new_file,
+                           default=default_cli_parameters.merge_file,
                            help="extract packet and paste to a new file")
     arg_parse.add_argument(
-        '--filename',
+        '-f', '--filename',
         type=str,
         nargs=1,
         help=
         "extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
         required=True)
     arg_parse.add_argument(
-        '--keep_source_file',
+        '-k', '--keep_source_file',
         help=
         'keep source file in local path, copy to a new file without remove it if is true',
         action='store_true',
         default=False)
     arg_parse.add_argument(
-        '--filter_pattern',
+        '-F', '--filter_pattern',
         type=str,
-        default=default_file_pattern,
+        default=default_cli_parameters.filter_pattern,
         help='filter the files to be merged')
 
     args = arg_parse.parse_args()
@@ -209,4 +214,4 @@ if __name__ == '__main__':
     remove_all_suffix_gz_file(path)
 
     # paste all file to a new file
-    paste_all_file(path, args)
+    merge_logfiles(path, args)
