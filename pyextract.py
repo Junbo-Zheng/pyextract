@@ -106,10 +106,10 @@ def pull_from_source_path(args):
 def gunzip_all(path):
     if os.path.exists(path):
         dirs = os.listdir(path)
-        for dir in dirs:
-            if '.gz' in dir:
-                filename = dir.replace(".gz", "")
-                gzip_file = gzip.GzipFile(path + '/' + dir)
+        for file in dirs:
+            if '.gz' in file:
+                filename = file.replace(".gz", "")
+                gzip_file = gzip.GzipFile(path + '/' + file)
                 with open(path + "/" + filename, 'wb+') as f:
                     f.write(gzip_file.read())
     print("gunzip all finish")
