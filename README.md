@@ -41,27 +41,31 @@ source ~/.bashrc
 # Usage
 
 ```Python
-➜  /Users/junbozheng/project/pyextract git:(paste) ✗ ./pyextract.py --help
+➜  /Users/junbozheng/project/pyextract git:(master) ./pyextract.py --help
 Parameter Number : 2
 Parameter Lists  : ['./pyextract.py', '--help']
 Shell Name       : ./pyextract.py
-usage: pyextract.py [-h] [--output_path OUTPUT_PATH [OUTPUT_PATH ...]] [--password PASSWORD [PASSWORD ...]] [--source_path SOURCE_PATH [SOURCE_PATH ...]]
-                    [--paste_new_file PASTE_NEW_FILE [PASTE_NEW_FILE ...]] --filename FILENAME [--keep_source_file]
+usage: pyextract.py [-h] [-o OUTPUT_PATH [OUTPUT_PATH ...]] [-P PASSWORD [PASSWORD ...]] [-i SOURCE_PATH [SOURCE_PATH ...]] [-O PASTE_NEW_FILE [PASTE_NEW_FILE ...]]
+-f FILENAME [-k] [-F FILTER_PATTERN]
 
 Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --output_path OUTPUT_PATH [OUTPUT_PATH ...]
-                        extract packet output path
-  --password PASSWORD [PASSWORD ...]
-                        extract packet and chmod with user password
-  --source_path SOURCE_PATH [SOURCE_PATH ...]
-                        extract packet source packet
-  --paste_new_file PASTE_NEW_FILE [PASTE_NEW_FILE ...]
-                        extract packet and paste to a new file
-  --filename FILENAME   extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz
-  --keep_source_file    keep source file in local path, copy to a new file without remove it if is true
+-h, --help            show this help message and exit
+-o OUTPUT_PATH [OUTPUT_PATH ...], --output_path OUTPUT_PATH [OUTPUT_PATH ...]
+extract packet output path
+-P PASSWORD [PASSWORD ...], --password PASSWORD [PASSWORD ...]
+extract packet and chmod with user password
+-i SOURCE_PATH [SOURCE_PATH ...], --source_path SOURCE_PATH [SOURCE_PATH ...]
+extract packet source packet
+-O PASTE_NEW_FILE [PASTE_NEW_FILE ...], --paste_new_file PASTE_NEW_FILE [PASTE_NEW_FILE ...]
+extract packet and paste to a new file
+-f FILENAME, --filename FILENAME
+extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz
+-k, --keep_source_file
+keep source file in local path, copy to a new file without remove it if is true
+-F FILTER_PATTERN, --filter_pattern FILTER_PATTERN
+filter the files to be merged
 ```
 
 `--filename` option must be filled in, otherwise `pyextract` may not know the index information about the file name you want to extract.
