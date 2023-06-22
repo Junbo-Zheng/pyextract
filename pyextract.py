@@ -61,7 +61,7 @@ def merge_logfiles(path, args):
 
 
 def pull_from_source_path(args):
-    if (args.source_path[0] == "phone"):
+    if args.source_path[0] == "phone":
         args.source_path = default_cli_parameters.remote_path
         adb_cmd = "adb pull " + args.source_path + " " + "./"
         print(adb_cmd)
@@ -93,7 +93,7 @@ def pull_from_source_path(args):
     output = args.filename[0] + "_" + default_cli_parameters.output_file
     output = os.path.join(path, output)
 
-    if (args.keep_source_file):
+    if args.keep_source_file:
         print("copy to %s" % output)
         shutil.copyfile(file, output)
     else:
