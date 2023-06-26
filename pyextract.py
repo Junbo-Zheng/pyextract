@@ -213,5 +213,5 @@ if __name__ == '__main__':
     # remove unused .gz files
     remove_all_suffix_gz_file(path)
 
-    # paste all file to a new file
+    # merge all file to a new file
     merge_logfiles(path, args)
