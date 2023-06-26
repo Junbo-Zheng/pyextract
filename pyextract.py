@@ -45,9 +45,9 @@ def merge_logfiles(path, args):
     file_list.sort()
     print("prepare to paste file list %s" % file_list)
 
-    if os.path.exists(args.paste_new_file):
+    if os.path.exists(args.merge_file):
         print("file exit and remove")
-        os.remove(args.paste_new_file)
+        os.remove(args.merge_file)
 
     cmd = "cat "
     for file in file_list:
@@ -55,7 +55,7 @@ def merge_logfiles(path, args):
             continue
         cmd += os.path.join(path, file) + " "
 
-    cmd += ">" + " " + args.paste_new_file
+    cmd += ">" + " " + args.merge_file
     print("cmd %s" % cmd)
     os.system(cmd)
 
@@ -93,12 +93,12 @@ def pull_from_source_path(args):
     output = args.filename[0] + "_" + default_cli_parameters.output_file
     output = os.path.join(path, output)
 
-    if args.keep_source_file:
-        print("copy to %s" % output)
-        shutil.copyfile(file, output)
-    else:
+    if args.purge_source_file:
         print("rename to %s" % output)
         os.rename(file, output)
+    else:
+        print("copy to %s" % output)
+        shutil.copyfile(file, output)
 
     return output
 
@@ -150,11 +150,11 @@ if __name__ == '__main__':
                            nargs='+',
                            default=default_cli_parameters.local_path,
                            help="extract packet source packet")
-    arg_parse.add_argument('-O', '--paste_new_file',
+    arg_parse.add_argument('-O', '--merge_file',
                            type=str,
                            nargs='+',
                            default=default_cli_parameters.merge_file,
-                           help="extract packet and paste to a new file")
+                           help="extract packet and merge to a new file")
     arg_parse.add_argument(
         '-f', '--filename',
         type=str,
@@ -163,9 +163,9 @@ if __name__ == '__main__':
         "extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
         required=True)
     arg_parse.add_argument(
-        '-k', '--keep_source_file',
+        '--purge_source_file',
         help=
-        'keep source file in local path, copy to a new file without remove it if is true',
+        'purge source file if is true',
         action='store_true',
         default=False)
     arg_parse.add_argument(
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     print(args.output_path)
     print(args.source_path)
     print(args.filename)
-    print(args.keep_source_file)
+    print(args.purge_source_file)
 
     if os.path.exists(args.output_path):
         input_str = input("The %s already exists, will cover it? [Y/N]\n" %
