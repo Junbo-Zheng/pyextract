@@ -211,3 +211,7 @@ if __name__ == '__main__':
 
     # merge all file to a new file
     merge_logfiles(path, args)
+
+    # remove output_path since it has been merge to a new file
+    cmd = "sudo rm -rf" + " " + args.output_path
+    os.system('echo %s | sudo -S %s' % (args.password[0], cmd))
