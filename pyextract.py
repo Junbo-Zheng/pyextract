@@ -146,7 +146,7 @@ if __name__ == '__main__':
                            default=default_cli_parameters.source_path,
                            help="extract packet from source path",
                            required=True)
-    arg_parse.add_argument('-O', '--merge_file',
+    arg_parse.add_argument('-m', '--merge_file',
                            type=str,
                            nargs='+',
                            default=default_cli_parameters.merge_file,
