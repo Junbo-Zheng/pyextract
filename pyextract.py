@@ -163,7 +163,7 @@ if __name__ == '__main__':
         "extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
         required=True)
     arg_parse.add_argument(
-        '--purge_source_file',
+        '-p', '--purge_source_file',
         help=
         'purge source file if is true',
         action='store_true',
