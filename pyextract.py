@@ -15,7 +15,7 @@ class DefaultCLIParameters:
     def __init__(self):
         self.password = "123456"
         self.remote_path = "/sdcard/Android/data/com.mi.health/files/log/devicelog"
-        self.local_path = 'Downloads'
+        self.source_path = '~/Downloads'
         self.output_path = "./file"
         self.output_file = "file.tar.gz"
         self.merge_file = "./merged.log"
@@ -69,16 +69,11 @@ def pull_from_source_path(args):
 
         file = os.getcwd() + "/devicelog/**/" + "*" + args.filename[0] + "*.tar*.gz"
         result = glob.glob(file, recursive=True)
-        print("glob result is %s" % result)
-        result = glob.glob(file, recursive=True)
     else:
-        root_path = os.path.join(
-            os.environ['HOME'], "Downloads"
-        ) if args.source_path[0] == "Downloads" else args.source_path[0]
-        pattern = root_path + "/" + "*" + args.filename[0] + "*.tar*.gz"
+        pattern = args.source_path[0] + "/" + "*" + args.filename[0] + "*.tar*.gz"
         result = glob.glob(pattern)
 
-    print("glob result %s" % result)
+    print("source path from %s, glob result %s" % (args.source_path[0], result))
 
     if len(result) == 0:
         return None
@@ -133,7 +128,7 @@ if __name__ == '__main__':
 
     arg_parse = argparse.ArgumentParser(
         description=
-        "Extract a file with the suffix `.tar.gz` from the local path or remote path and extract to output_path."
+        "Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to output_path."
     )
     arg_parse.add_argument('-o', '--output_path',
                            type=str,
@@ -145,11 +140,12 @@ if __name__ == '__main__':
                            nargs='+',
                            default=default_cli_parameters.password,
                            help="extract packet and chmod with user password")
-    arg_parse.add_argument('-i', '--source_path',
+    arg_parse.add_argument('-s', '--source_path',
                            type=str,
                            nargs='+',
-                           default=default_cli_parameters.local_path,
-                           help="extract packet source packet")
+                           default=default_cli_parameters.source_path,
+                           help="extract packet from source path",
+                           required=True)
     arg_parse.add_argument('-O', '--merge_file',
                            type=str,
                            nargs='+',
