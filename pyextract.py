@@ -115,10 +115,10 @@ def extract_and_chmod(args, file):
         os.makedirs(args.output_path)
 
     cmd = "tar -xzvf " + file + " -C " + args.output_path
-    os.system('echo %s | sudo -S %s' % (args.password[0], cmd))
+    os.system(cmd)
 
-    cmd = "sudo chmod -R 777" + " " + args.output_path
-    os.system('echo %s | sudo -S %s' % (args.password[0], cmd))
+    cmd = "chmod -R 777" + " " + args.output_path
+    os.system('echo %s | sudo -S %s' % (args.password, cmd))
 
 
 if __name__ == '__main__':
@@ -137,7 +137,7 @@ if __name__ == '__main__':
                            help="extract packet output path")
     arg_parse.add_argument('-P', '--password',
                            type=str,
-                           nargs='+',
+                           nargs='?',
                            default=default_cli_parameters.password,
                            help="extract packet and chmod with user password")
     arg_parse.add_argument('-s', '--source_path',
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
         cmd = "rm -rf " + args.output_path
         print("%s path exist, remove, cmd %s" % (args.output_path, cmd))
-        os.system('echo %s | sudo -S %s' % (args.password[0], cmd))
+        os.system('echo %s | sudo -S %s' % (args.password, cmd))
 
     file = pull_from_source_path(args)
     if file is None:
@@ -212,5 +212,5 @@ if __name__ == '__main__':
     merge_logfiles(path, args)
 
     # remove output_path since it has been merge to a new file
-    cmd = "sudo rm -rf" + " " + args.output_path
-    os.system('echo %s | sudo -S %s' % (args.password[0], cmd))
+    cmd = "rm -rf" + " " + args.output_path
+    os.system('echo %s | sudo -S %s' % (args.password, cmd))
