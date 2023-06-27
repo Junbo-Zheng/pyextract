@@ -30,7 +30,7 @@ def get_full_path(path):
     for root, dirs, files in os.walk(path):
         for file in files:
             if file == default_cli_parameters.tmp_log:
-                return os.path.join(root, file)
+                return os.path.abspath(root)
 
 
 def remove_all_suffix_gz_file(path):
@@ -199,9 +199,8 @@ if __name__ == '__main__':
     # file is temp, need to remove
     os.remove(file)
 
-    full = get_full_path(args.output_path)
-    path, unused = os.path.split(full)
-    print("full %s path %s, unused %s" % (full, path, unused))
+    path = get_full_path(args.output_path)
+    print("full path %s" % path)
 
     # gunzip all *.gz files under path
     gunzip_all(path)
