@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # -*- coding:UTF-8 -*-
-
 import shutil
+import subprocess
 import sys
 import os
 import gzip
@@ -24,6 +24,82 @@ class DefaultCLIParameters:
 
 
 default_cli_parameters = DefaultCLIParameters()
+
+
+class ShellRunner:
+    @staticmethod
+    def command_run(command, password=None):
+        run_cmd = command.split(" ")
+        if password is not None and "sudo" in run_cmd:
+            run_cmd.insert(0, "echo \"%s\"|" % password + "\n")
+            run_cmd.insert(run_cmd.index("sudo") + 1, "-S")
+
+        run_cmd = " ".join(run_cmd)
+        return subprocess.run(run_cmd, stdin=sys.stdin, stdout=sys.stdout, shell=True).returncode
+
+
+class CLIParametersParser:
+    def __init__(self):
+        print('Parameter Number :', len(sys.argv))
+        print('Parameter Lists  :', str(sys.argv))
+        print('Shell Name       :', str(sys.argv[0]))
+
+        arg_parser = argparse.ArgumentParser(
+            description=
+            "Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to output_path."
+        )
+        arg_parser.add_argument('-o', '--output_path',
+                                type=str,
+                                nargs='+',
+                                default=default_cli_parameters.output_path,
+                                help="extract packet output path")
+        arg_parser.add_argument('-P', '--password',
+                                type=str,
+                                nargs='?',
+                                default=default_cli_parameters.password,
+                                help="extract packet and chmod with user password")
+        arg_parser.add_argument('-s', '--source_path',
+                                type=str,
+                                nargs='+',
+                                default=default_cli_parameters.source_path,
+                                help="extract packet from source path",
+                                required=True)
+        arg_parser.add_argument('-m', '--merge_file',
+                                type=str,
+                                nargs='+',
+                                default=default_cli_parameters.merge_file,
+                                help="extract packet and merge to a new file")
+        arg_parser.add_argument(
+            '-f', '--filename',
+            type=str,
+            nargs=1,
+            help=
+            "extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
+            required=True)
+        arg_parser.add_argument(
+            '-p', '--purge_source_file',
+            help=
+            'purge source file if is true',
+            action='store_true',
+            default=False)
+        arg_parser.add_argument(
+            '-F', '--filter_pattern',
+            type=str,
+            default=default_cli_parameters.filter_pattern,
+            help='filter the files to be merged')
+
+        self.__cli_args = arg_parser.parse_args()
+
+        print(self.output_path)
+        print(self.source_path)
+        print(self.filename)
+        print(self.purge_source_file)
+
+    def __getattr__(self, item):
+        return self.__cli_args.__getattribute__(item)
+
+    def __set__(self, instance, value):
+        self.__cli_args.__set__(instance, value)
 
 
 def get_full_path(path):
@@ -57,15 +133,15 @@ def merge_logfiles(path, args):
 
     cmd += ">" + " " + args.merge_file
     print("cmd %s" % cmd)
-    os.system(cmd)
+    ShellRunner.command_run(cmd)
 
 
 def pull_from_source_path(args):
     if args.source_path[0] == "phone":
-        args.source_path = default_cli_parameters.remote_path
-        adb_cmd = "adb pull " + args.source_path + " " + "./"
+        args.source_path[0] = default_cli_parameters.remote_path
+        adb_cmd = "adb pull " + args.source_path[0] + " " + "./"
         print(adb_cmd)
-        os.system(adb_cmd)
+        ShellRunner.command_run(adb_cmd)
 
         file = os.getcwd() + "/devicelog/**/" + "*" + args.filename[0] + "*.tar*.gz"
         result = glob.glob(file, recursive=True)
@@ -115,91 +191,39 @@ def extract_and_chmod(args, file):
         os.makedirs(args.output_path)
 
     cmd = "tar -xzvf " + file + " -C " + args.output_path
-    os.system(cmd)
+    ShellRunner.command_run(cmd)
 
-    cmd = "chmod -R 777" + " " + args.output_path
-    os.system('echo %s | sudo -S %s' % (args.password, cmd))
+    cmd = "sudo chmod -R 755" + " " + args.output_path
+    ShellRunner.command_run(cmd, args.password)
 
 
 if __name__ == '__main__':
-    print('Parameter Number :', len(sys.argv))
-    print('Parameter Lists  :', str(sys.argv))
-    print('Shell Name       :', str(sys.argv[0]))
+    # parse command line args
+    cli_args = CLIParametersParser()
 
-    arg_parse = argparse.ArgumentParser(
-        description=
-        "Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to output_path."
-    )
-    arg_parse.add_argument('-o', '--output_path',
-                           type=str,
-                           nargs='+',
-                           default=default_cli_parameters.output_path,
-                           help="extract packet output path")
-    arg_parse.add_argument('-P', '--password',
-                           type=str,
-                           nargs='?',
-                           default=default_cli_parameters.password,
-                           help="extract packet and chmod with user password")
-    arg_parse.add_argument('-s', '--source_path',
-                           type=str,
-                           nargs='+',
-                           default=default_cli_parameters.source_path,
-                           help="extract packet from source path",
-                           required=True)
-    arg_parse.add_argument('-m', '--merge_file',
-                           type=str,
-                           nargs='+',
-                           default=default_cli_parameters.merge_file,
-                           help="extract packet and merge to a new file")
-    arg_parse.add_argument(
-        '-f', '--filename',
-        type=str,
-        nargs=1,
-        help=
-        "extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
-        required=True)
-    arg_parse.add_argument(
-        '-p', '--purge_source_file',
-        help=
-        'purge source file if is true',
-        action='store_true',
-        default=False)
-    arg_parse.add_argument(
-        '-F', '--filter_pattern',
-        type=str,
-        default=default_cli_parameters.filter_pattern,
-        help='filter the files to be merged')
-
-    args = arg_parse.parse_args()
-
-    print(args.output_path)
-    print(args.source_path)
-    print(args.filename)
-    print(args.purge_source_file)
-
-    if os.path.exists(args.output_path):
+    if os.path.exists(cli_args.output_path):
         input_str = input("The %s already exists, will cover it? [Y/N]\n" %
-                          args.output_path)
+                          cli_args.output_path)
         if input_str != 'Y':
             print("quit and exit")
             sys.exit(0)
 
-        cmd = "rm -rf " + args.output_path
-        print("%s path exist, remove, cmd %s" % (args.output_path, cmd))
-        os.system('echo %s | sudo -S %s' % (args.password, cmd))
+    cmd = "sudo rm -rf " + cli_args.output_path
+    print("%s path exist, remove, cmd %s" % (cli_args.output_path, cmd))
+    ShellRunner.command_run(cmd, cli_args.password)
 
-    file = pull_from_source_path(args)
+    file = pull_from_source_path(cli_args)
     if file is None:
         print("not found file packet")
         sys.exit()
 
     print("output file %s" % file)
-    extract_and_chmod(args, file)
+    extract_and_chmod(cli_args, file)
 
     # file is temp, need to remove
     os.remove(file)
 
-    path = get_full_path(args.output_path)
+    path = get_full_path(cli_args.output_path)
     print("full path %s" % path)
 
     # gunzip all *.gz files under path
@@ -209,8 +233,8 @@ if __name__ == '__main__':
     remove_all_suffix_gz_file(path)
 
     # merge all file to a new file
-    merge_logfiles(path, args)
+    merge_logfiles(path, cli_args)
 
     # remove output_path since it has been merge to a new file
-    cmd = "rm -rf" + " " + args.output_path
-    os.system('echo %s | sudo -S %s' % (args.password, cmd))
+    cmd = "sudo rm -rf" + " " + cli_args.output_path
+    ShellRunner.command_run(cmd, cli_args.password)
