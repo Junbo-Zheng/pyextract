@@ -132,10 +132,10 @@ class LogTools:
             pattern = self.__cli_parser.source_path[0] + "/" + "*" + self.__cli_parser.filename[0] + "*.tar*.gz"
             result = glob.glob(pattern)
 
-        print(Highlight.Convert("pull") + " %s from %s" % (result, self.__cli_parser.source_path[0]))
-
         if len(result) == 0:
             return -1
+
+        print(Highlight.Convert("pull") + " %s from %s" % (result, self.__cli_parser.source_path[0]))
 
         if len(result) > 1:
             index = input("Please input the file index you want to extract:\n")
