@@ -107,7 +107,7 @@ class LogTools:
         if not os.path.exists(self.__cli_parser.output_path):
             return 0
 
-        # if exists output path, clear
+        # if output path exists, clear
         if ask:
             input_str = input("The %s already exists, will cover it? [Y/N]\n" %
                               self.__cli_parser.output_path)
@@ -218,8 +218,8 @@ class LogTools:
         # remove unused .gz files
         return self.__remove_all_suffix_gz_file__()
 
+    # merge all file to a new file
     def merge_logfiles(self):
-        # merge all file to a new file
         file_list = os.listdir(self.log_dir_path)
         file_list.sort()
         print(Highlight.Convert("merge") + " file list %s" % file_list)
