@@ -15,7 +15,7 @@ from enum import IntEnum
 class DefaultCLIParameters:
     password = "123456"
     remote_path = "/sdcard/Android/data/com.mi.health/files/log/devicelog"
-    source_path = '~/Downloads'
+    source_path = "~/Downloads"
     output_path = "./file"
     output_file = "file.tar.gz"
     merge_file = "./merged.log"
@@ -37,9 +37,9 @@ class ShellRunner:
 
 class CLIParametersParser:
     def __init__(self):
-        print('Parameter Number :', len(sys.argv))
-        print('Parameter Lists  :', str(sys.argv))
-        print('Shell Name       :', str(sys.argv[0]))
+        print("Parameter Number :", len(sys.argv))
+        print("Parameter Lists  :", str(sys.argv))
+        print("Shell Name       :", str(sys.argv[0]))
 
         arg_parser = argparse.ArgumentParser(
             description="Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to "
@@ -74,14 +74,14 @@ class CLIParametersParser:
             required=True)
         arg_parser.add_argument(
             '-p', '--purge_source_file',
-            help='purge source file if is true',
+            help="purge source file if is true",
             action='store_true',
             default=False)
         arg_parser.add_argument(
             '-F', '--filter_pattern',
             type=str,
             default=DefaultCLIParameters.filter_pattern,
-            help='filter the files to be merged')
+            help="filter the files to be merged")
 
         self.__cli_args = arg_parser.parse_args()
 
@@ -183,10 +183,10 @@ class LogTools:
 
         dirs = os.listdir(self.log_dir_path)
         for file in dirs:
-            if '.gz' in file:
+            if ".gz" in file:
                 filename = file.replace(".gz", "")
                 gzip_file = gzip.GzipFile(self.log_dir_path + '/' + file)
-                with open(os.path.join(self.log_dir_path, filename), 'wb+') as f:
+                with open(os.path.join(self.log_dir_path, filename), "wb+") as f:
                     f.write(gzip_file.read())
         print("\n" + Highlight.Convert("gunzip") + " all finish")
         return 0
