@@ -143,7 +143,7 @@ class LogTools:
         else:
             file = result[0]
 
-        path, unused = os.path.split(file)
+        path = os.path.dirname(file)
         output = self.__cli_parser.filename[0] + "_" + DefaultCLIParameters.output_file
         output = os.path.join(path, output)
 
