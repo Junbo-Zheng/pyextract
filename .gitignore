@@ -6,3 +6,9 @@ file/
 
 .idea/
 merged.log
+
+*.log
+
+# IDE
+.vscode
+.idea
