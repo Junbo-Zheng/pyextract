@@ -18,7 +18,6 @@ class DefaultCLIParameters:
     source_path = "~/Downloads"
     output_path = "./file"
     output_file = "file.tar.gz"
-    merge_file = "./merged.log"
     filter_pattern = "log\\d*|tmp.log"
     tmp_log = "tmp.log"
 
@@ -63,8 +62,7 @@ class CLIParametersParser:
                                 required=True)
         arg_parser.add_argument('-m', '--merge_file',
                                 type=str,
-                                nargs='+',
-                                default=DefaultCLIParameters.merge_file,
+                                nargs='?',
                                 help="extract packet and merge to a new file")
         arg_parser.add_argument(
             '-f', '--filename',
@@ -89,6 +87,11 @@ class CLIParametersParser:
         print("source_path      :", self.source_path)
         print("filename         :", self.filename)
         print("purge_source_file:", self.purge_source_file)
+        print("merge_file       :", self.merge_file)
+
+        # With the input filename parameter as merge file if merge file is not specified
+        if self.merge_file is None:
+            self.merge_file = os.path.join(os.getcwd(), self.filename[0] + ".log")
 
     def __getattr__(self, item):
         return self.__cli_args.__getattribute__(item)
