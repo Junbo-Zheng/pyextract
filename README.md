@@ -1,10 +1,10 @@
-# Python Extract Files
+# Python Extract `tar.gz` Files
 
-Extracted a file with the suffix `.tar.gz` from the **local path** or **remote path**, and extracted to **output_path**. Also, all the suffix with `.gz` files will be unzipped at the same time.
+Extracted file with the suffix `tar.gz` from the **local path** or **remote path** to **output_path**. Also, all the suffix with `.gz` files will be unzipped at the same time.
 
-One more things, `pyextract` supports merge all extracted files into one new file. By default, the name of the merged file is **merged.log**, modify it with the `--merge_file` or `-m` option as you wish.
+**One more things**, `pyextract` supports merge all extracted files into one new file. By default, the name of merged file is `self.filename.log` with python `arg_parser`, just change with the `--merge_file` or `-m` option as you wish.
 
-For example, a compressed package(named `123456_abc.tar.gz`) that stores the other compressed packages and files, as follows:
+For example, a compressed package with the suffix `tar.gz`(named `123456_abc.tar.gz`) that stores the other compressed packages and files, as follows:
 
 ```Shell
 .
@@ -16,8 +16,6 @@ For example, a compressed package(named `123456_abc.tar.gz`) that stores the oth
         ├── 4.gz
         └── tmp.log
 ```
-
-Ths compressed package suffix name must be with `.tar.gz`.
 
 Additionally, the files in the `.tar.gz` package are compressed packages with `.gz` as the suffix, and include a specific file, used to help us find the path where the `.gz` file located. We assume it is called `tmp.log`, which is free and you can modify it according to you want.
 
@@ -68,7 +66,7 @@ optional arguments:
                         filter the files to be merged
 ```
 
-Two methods supported to extract compressed files:
+There are two ways that supported to extract files:
 
 ```Shell
 +------------------------+---------------------+
@@ -78,7 +76,7 @@ Two methods supported to extract compressed files:
 +------------------------+             \|/     |
                                                |
                                               \|/    pyextract.py
-                                               |-------------------> local output path
+                                               +-------------------> local output path
                                               /|\                  (./file path by default)
 +----------------------+               /|\     |
 +       Ubuntu         +                |      |
