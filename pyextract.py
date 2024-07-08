@@ -43,11 +43,13 @@ class ShellRunner:
     def command_run(command, password=None):
         run_cmd = command.split(" ")
         if password is not None and "sudo" in run_cmd:
-            run_cmd.insert(0, "echo \"%s\"|" % password + "\n")
+            run_cmd.insert(0, 'echo "%s"|' % password + "\n")
             run_cmd.insert(run_cmd.index("sudo") + 1, "-S")
 
         run_cmd = " ".join(run_cmd)
-        return subprocess.run(run_cmd, stdin=sys.stdin, stdout=sys.stdout, shell=True).returncode
+        return subprocess.run(
+            run_cmd, stdin=sys.stdin, stdout=sys.stdout, shell=True
+        ).returncode
 
 
 class CLIParametersParser:
@@ -58,44 +60,62 @@ class CLIParametersParser:
 
         arg_parser = argparse.ArgumentParser(
             description="Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to "
-                        "output_path."
+            "output_path."
         )
-        arg_parser.add_argument('-o', '--output_path',
-                                type=str,
-                                nargs='+',
-                                default=DefaultCLIParameters.output_path,
-                                help="extract packet output path")
-        arg_parser.add_argument('-P', '--password',
-                                type=str,
-                                nargs='?',
-                                default=DefaultCLIParameters.password,
-                                help="extract packet and chmod with user password")
-        arg_parser.add_argument('-s', '--source_path',
-                                type=str,
-                                nargs='+',
-                                default=DefaultCLIParameters.source_path,
-                                help="extract packet from source path",
-                                required=True)
-        arg_parser.add_argument('-m', '--merge_file',
-                                type=str,
-                                nargs='?',
-                                help="extract packet and merge to a new file")
         arg_parser.add_argument(
-            '-f', '--filename',
+            "-o",
+            "--output_path",
+            type=str,
+            nargs="+",
+            default=DefaultCLIParameters.output_path,
+            help="extract packet output path",
+        )
+        arg_parser.add_argument(
+            "-P",
+            "--password",
+            type=str,
+            nargs="?",
+            default=DefaultCLIParameters.password,
+            help="extract packet and chmod with user password",
+        )
+        arg_parser.add_argument(
+            "-s",
+            "--source_path",
+            type=str,
+            nargs="+",
+            default=DefaultCLIParameters.source_path,
+            help="extract packet from source path",
+            required=True,
+        )
+        arg_parser.add_argument(
+            "-m",
+            "--merge_file",
+            type=str,
+            nargs="?",
+            help="extract packet and merge to a new file",
+        )
+        arg_parser.add_argument(
+            "-f",
+            "--filename",
             type=str,
             nargs=1,
             help="extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz",
-            required=True)
+            required=True,
+        )
         arg_parser.add_argument(
-            '-p', '--purge_source_file',
+            "-p",
+            "--purge_source_file",
             help="purge source file if is true",
-            action='store_true',
-            default=False)
+            action="store_true",
+            default=False,
+        )
         arg_parser.add_argument(
-            '-F', '--filter_pattern',
+            "-F",
+            "--filter_pattern",
             type=str,
             default=DefaultCLIParameters.filter_pattern,
-            help="filter the files to be merged")
+            help="filter the files to be merged",
+        )
 
         self.__cli_args = arg_parser.parse_args()
 
@@ -128,14 +148,19 @@ class LogTools:
 
         # if output path exists, clear
         if ask:
-            input_str = input("The %s already exists, will cover it? [Y/N]\n" %
-                              self.__cli_parser.output_path)
-            if input_str != 'Y':
+            input_str = input(
+                "The %s already exists, will cover it? [Y/N]\n"
+                % self.__cli_parser.output_path
+            )
+            if input_str != "Y":
                 print("quit and exit")
                 return -1
 
         cmd = "sudo rm -rf " + self.__cli_parser.output_path
-        print(Highlight.Convert("clear") + " exist file %s by command %s" % (self.__cli_parser.output_path, cmd))
+        print(
+            Highlight.Convert("clear")
+            + " exist file %s by command %s" % (self.__cli_parser.output_path, cmd)
+        )
         return ShellRunner.command_run(cmd, self.__cli_parser.password)
 
     def pull_packet(self):
@@ -145,16 +170,31 @@ class LogTools:
             print(adb_cmd)
             ShellRunner.command_run(adb_cmd)
 
-            file = os.getcwd() + "/devicelog/**/" + "*" + self.__cli_parser.filename[0] + "*.tar*.gz"
+            file = (
+                os.getcwd()
+                + "/devicelog/**/"
+                + "*"
+                + self.__cli_parser.filename[0]
+                + "*.tar*.gz"
+            )
             result = glob.glob(file, recursive=True)
         else:
-            pattern = self.__cli_parser.source_path[0] + "/" + "*" + self.__cli_parser.filename[0] + "*.tar*.gz"
+            pattern = (
+                self.__cli_parser.source_path[0]
+                + "/"
+                + "*"
+                + self.__cli_parser.filename[0]
+                + "*.tar*.gz"
+            )
             result = glob.glob(pattern)
 
         if len(result) == 0:
             return -1
 
-        print(Highlight.Convert("pull") + " %s from %s" % (result, self.__cli_parser.source_path[0]))
+        print(
+            Highlight.Convert("pull")
+            + " %s from %s" % (result, self.__cli_parser.source_path[0])
+        )
 
         if len(result) > 1:
             index = input("Please input the file index you want to extract:\n")
@@ -204,7 +244,7 @@ class LogTools:
         for file in dirs:
             if ".gz" in file:
                 filename = file.replace(".gz", "")
-                gzip_file = gzip.GzipFile(self.log_dir_path + '/' + file)
+                gzip_file = gzip.GzipFile(self.log_dir_path + "/" + file)
                 with open(os.path.join(self.log_dir_path, filename), "wb+") as f:
                     f.write(gzip_file.read())
         print("\n" + Highlight.Convert("gunzip") + " all finish")
@@ -214,7 +254,9 @@ class LogTools:
         if not os.path.exists(self.__cli_parser.output_path):
             os.makedirs(self.__cli_parser.output_path)
 
-        cmd = "tar -xzvf " + self.log_packet_path + " -C " + self.__cli_parser.output_path
+        cmd = (
+            "tar -xzvf " + self.log_packet_path + " -C " + self.__cli_parser.output_path
+        )
         print(Highlight.Convert("extract") + " by command " + cmd)
         if ShellRunner.command_run(cmd) != 0:
             return -1
@@ -277,7 +319,7 @@ class Highlight(IntEnum):
         return "\033[;%dm%s\033[0m" % (color, msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # parse command line args
     cli_args = CLIParametersParser()
 
