@@ -36,6 +36,7 @@ class DefaultCLIParameters:
     output_file = "file.tar.gz"
     filter_pattern = "log\\d*|tmp.log"
     tmp_log = "tmp.log"
+    core_prefix = "core-"
 
 
 class ShellRunner:
@@ -229,6 +230,13 @@ class LogTools:
                     return 0
         return -1
 
+    def __find_coredump(self):
+        for root, dirs, files in os.walk(self.log_dir_path):
+            for file in files:
+                if file.startswith(DefaultCLIParameters.core_prefix):
+                    return os.path.join(root, file)
+        return None
+
     def __remove_all_suffix_gz_file__(self):
         for root, dirs, files in os.walk(self.log_dir_path):
             for file in files:
@@ -248,6 +256,18 @@ class LogTools:
                 with open(os.path.join(self.log_dir_path, filename), "wb+") as f:
                     f.write(gzip_file.read())
         print("\n" + Highlight.Convert("gunzip") + " all finish")
+        return 0
+
+    def extract_coredump(self):
+        coredump = self.__find_coredump()
+        if coredump == None:
+            print("Coredump not found")
+            return 0
+
+        print("Coredump found, coredump file -> ", coredump)
+        des_path = os.path.join(os.getcwd())
+        copy_cmd = "cp " + coredump + " " + des_path
+        os.system(copy_cmd)
         return 0
 
     def extract_packet(self):
@@ -333,6 +353,9 @@ if __name__ == "__main__":
 
     # extract log packet
     CHECK_ERROR_EXIT(logtools.extract_packet())
+
+    # extract coredump file
+    CHECK_ERROR_EXIT(logtools.extract_coredump())
 
     # merge the log files to one file, then remove output dir
     if logtools.merge_logfiles() == 0:
