@@ -360,4 +360,5 @@ if __name__ == "__main__":
     # merge the log files to one file, then remove output dir
     if logtools.merge_logfiles() == 0:
         logtools.clear_output_dir(False)
+
     print(Highlight.Convert("Successful", Highlight.GREEN))
