@@ -20,19 +20,30 @@ import os
 import gzip
 
 
-def unzip_gz_files(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".gz"):
-                gz_file_path = os.path.join(root, file)
-                new_file_path = os.path.join(root, file[:-3])
-                with gzip.open(gz_file_path, "rb") as f_in:
-                    with open(new_file_path, "wb") as f_out:
-                        f_out.write(f_in.read())
-                print(f"文件 {gz_file_path} 解压成功...")
+def unzip_gz_files_and_merge(directory, log_file, output_file):
+    with open(output_file, "wb") as merged_file:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith(".gz"):
+                    gz_file_path = os.path.join(root, file)
+                    new_file_path = os.path.join(root, file[:-3])
+
+                    with gzip.open(gz_file_path, "rb") as f_in:
+                        decompressed_data = f_in.read()
+
+                    merged_file.write(decompressed_data)
+                    print(f"文件 {gz_file_path} 解压并合并成功...")
+
+        with open(log_file, "rb") as tmp_log:
+            merged_file.write(tmp_log.read())
+            print(f"文件 {log_file} 的内容已添加到合并文件中...")
+
+    print(f"所有文件已解压并合并到 {output_file} 中...")
 
 
 if __name__ == "__main__":
     target_directory = "."
-    unzip_gz_files(target_directory)
-    print("所有.gz文件已全部解压完成...")
+    tmp_log_file = "tmp.log"
+    merged_file = "output.log"
+
+    unzip_gz_files_and_merge(target_directory, tmp_log_file, merged_file)
