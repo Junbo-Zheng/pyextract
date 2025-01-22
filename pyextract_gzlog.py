@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding:UTF-8 -*-
 #
 # Copyright (C) 2025 Junbo Zheng. All rights reserved.
@@ -18,6 +18,7 @@
 
 import os
 import gzip
+import argparse
 
 
 def unzip_gz_files_and_merge(directory, log_file, output_file):
@@ -42,8 +43,23 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
 
 
 if __name__ == "__main__":
-    target_directory = "."
-    tmp_log_file = "tmp.log"
-    merged_file = "output.log"
+    parser = argparse.ArgumentParser(description="解压并合并.gz文件和日志文件")
+    parser.add_argument(
+        "--log_file",
+        type=str,
+        default="tmp.log",
+        help="指定要合并的日志文件默认使用tmp.log",
+    )
+    parser.add_argument(
+        "--output_file",
+        type=str,
+        default="output.log",
+        help="指定输出文件的名称默认使用output.log",
+    )
+    parser.add_argument(
+        "--path", type=str, default=".", help="指定搜索的目录，默认是当前目录"
+    )
 
-    unzip_gz_files_and_merge(target_directory, tmp_log_file, merged_file)
+    args = parser.parse_args()
+
+    unzip_gz_files_and_merge(args.path, args.log_file, args.output_file)
