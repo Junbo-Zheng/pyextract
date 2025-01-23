@@ -62,4 +62,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if not os.path.isfile(args.log_file):
+        print(f"日志文件 {args.log_file} 不存在，请检查...")
+        exit(1)
+
     unzip_gz_files_and_merge(args.path, args.log_file, args.output_file)
