@@ -274,10 +274,13 @@ class LogTools:
         if not os.path.exists(self.__cli_parser.output_path):
             os.makedirs(self.__cli_parser.output_path)
 
-        cmd = (
-            "tar -xzvf " + self.log_packet_path + " -C " + self.__cli_parser.output_path
-        )
-        print(Highlight.Convert("extract") + " by command " + cmd)
+        cmd = "gzip -d " + self.log_packet_path
+        print(Highlight.Convert("gzip") + " by command " + cmd)
+        ShellRunner.command_run(cmd)
+
+        tar_package = self.log_packet_path.replace(".gz", "")
+        cmd = "tar -xvf " + tar_package + " -C " + self.__cli_parser.output_path
+        print(Highlight.Convert("tar") + " by command " + cmd)
         if ShellRunner.command_run(cmd) != 0:
             return -1
 
@@ -285,8 +288,8 @@ class LogTools:
         if ShellRunner.command_run(cmd, self.__cli_parser.password) != 0:
             return -1
 
-        # file is temp, need to remove
-        os.remove(self.log_packet_path)
+        # tar_package is tmp file, since it's has replaced from .tar.gz to .tar, let's remove it
+        os.remove(tar_package)
 
         # find log files dir path
         if self.__find_logfiles_path__() != 0:
