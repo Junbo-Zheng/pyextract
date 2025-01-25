@@ -233,7 +233,8 @@ class LogTools:
     def __find_coredump(self):
         for root, dirs, files in os.walk(self.log_dir_path):
             for file in files:
-                if file.startswith(DefaultCLIParameters.core_prefix):
+                # find core dump file by prefix "core-" or "Core-"
+                if file.lower().startswith(DefaultCLIParameters.core_prefix.lower()):
                     return os.path.join(root, file)
         return None
 
