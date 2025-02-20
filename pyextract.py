@@ -120,15 +120,21 @@ class CLIParametersParser:
 
         self.__cli_args = arg_parser.parse_args()
 
+        # extract the filename without suffix
+        pattern = r"^(.*?)\.tar.*\.gz$"
+        match = re.match(pattern, self.filename[0])
+        if match:
+            self.filename[0] = match.group(1)
+
+        # With the input filename parameter as merge file if merge file is not specified
+        if self.merge_file is None:
+            self.merge_file = os.path.join(os.getcwd(), self.filename[0] + ".log")
+
         print("output_path      :", self.output_path)
         print("source_path      :", self.source_path)
         print("filename         :", self.filename)
         print("purge_source_file:", self.purge_source_file)
         print("merge_file       :", self.merge_file)
-
-        # With the input filename parameter as merge file if merge file is not specified
-        if self.merge_file is None:
-            self.merge_file = os.path.join(os.getcwd(), self.filename[0] + ".log")
 
     def __getattr__(self, item):
         return self.__cli_args.__getattribute__(item)
