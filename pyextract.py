@@ -56,7 +56,6 @@ class ShellRunner:
 class CLIParametersParser:
     def __init__(self):
         print("Parameter Number :", len(sys.argv))
-        print("Parameter Lists  :", str(sys.argv))
         print("Shell Name       :", str(sys.argv[0]))
 
         arg_parser = argparse.ArgumentParser(
