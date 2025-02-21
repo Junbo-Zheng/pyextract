@@ -39,16 +39,14 @@ source ~/.bashrc
 # Usage
 
 ```Python
-➜  /Users/junbozheng/project/pyextract git:(master) ./pyextract.py --help
+➜  /Users/junbozheng/my/pyextract git:(master) ./pyextract.py --help
 Parameter Number : 2
-Parameter Lists  : ['./pyextract.py', '--help']
 Shell Name       : ./pyextract.py
-usage: pyextract.py [-h] [-o OUTPUT_PATH [OUTPUT_PATH ...]] [-P [PASSWORD]] -s SOURCE_PATH [SOURCE_PATH ...] [-m MERGE_FILE [MERGE_FILE ...]] -f FILENAME [-p]
-                    [-F FILTER_PATTERN]
+usage: pyextract.py [-h] [-o OUTPUT_PATH [OUTPUT_PATH ...]] [-P [PASSWORD]] -s SOURCE_PATH [SOURCE_PATH ...] [-m [MERGE_FILE]] -f FILENAME [-p] [-F FILTER_PATTERN]
 
 Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to output_path.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -o OUTPUT_PATH [OUTPUT_PATH ...], --output_path OUTPUT_PATH [OUTPUT_PATH ...]
                         extract packet output path
@@ -56,7 +54,7 @@ optional arguments:
                         extract packet and chmod with user password
   -s SOURCE_PATH [SOURCE_PATH ...], --source_path SOURCE_PATH [SOURCE_PATH ...]
                         extract packet from source path
-  -m MERGE_FILE [MERGE_FILE ...], --merge_file MERGE_FILE [MERGE_FILE ...]
+  -m [MERGE_FILE], --merge_file [MERGE_FILE]
                         extract packet and merge to a new file
   -f FILENAME, --filename FILENAME
                         extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz
