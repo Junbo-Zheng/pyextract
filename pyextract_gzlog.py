@@ -33,37 +33,37 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
                         decompressed_data = f_in.read()
 
                     merged_file.write(decompressed_data)
-                    print(f"文件 {gz_file_path} 解压并合并成功...")
+                    print(f"file {gz_file_path} unzip and merge successfully......")
 
         with open(log_file, "rb") as tmp_log:
             merged_file.write(tmp_log.read())
-            print(f"文件 {log_file} 的内容已添加到合并文件中...")
+            print(f"file {log_file} has been merged...")
 
     print(f"所有文件已解压并合并到 {output_file} 中...")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="解压并合并.gz文件和日志文件")
+    parser = argparse.ArgumentParser(description="both .gz file and the log file will be unzip and merge")
     parser.add_argument(
         "--log_file",
         type=str,
         default="tmp.log",
-        help="指定要合并的日志文件默认使用tmp.log",
+        help="specify the log file to be merged. tmp.log is used by default",
     )
     parser.add_argument(
         "--output_file",
         type=str,
         default="output.log",
-        help="指定输出文件的名称默认使用output.log",
+        help="specify the name of the output file. output.log is used by default",
     )
     parser.add_argument(
-        "--path", type=str, default=".", help="指定搜索的目录，默认是当前目录"
+        "--path", type=str, default=".", help="specify the directory to search, current directory by default"
     )
 
     args = parser.parse_args()
 
     if not os.path.isfile(args.log_file):
-        print(f"日志文件 {args.log_file} 不存在，请检查...")
+        print(f"log file {args.log_file} not exist, please check...")
         exit(1)
 
     unzip_gz_files_and_merge(args.path, args.log_file, args.output_file)
