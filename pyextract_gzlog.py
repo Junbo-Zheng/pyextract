@@ -39,7 +39,6 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
             merged_file.write(tmp_log.read())
             print(f"file {log_file} has been merged...")
 
-    print(f"所有文件已解压并合并到 {output_file} 中...")
     print(f"Good job! All files has been merge to {output_file} ...")
 
 
