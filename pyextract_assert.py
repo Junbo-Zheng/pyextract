@@ -84,4 +84,3 @@ if __name__ == "__main__":
 
     args = arg_parser.parse_args()
     filter_log_file(args.input_file, args.output_file, args.start_line, args.end_line)
-
