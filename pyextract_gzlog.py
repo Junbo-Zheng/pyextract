@@ -43,7 +43,9 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="both .gz file and the log file will be unzip and merge")
+    parser = argparse.ArgumentParser(
+        description="both .gz file and the log file will be unzip and merge"
+    )
     parser.add_argument(
         "--log_file",
         type=str,
@@ -57,7 +59,10 @@ if __name__ == "__main__":
         help="specify the name of the output file. output.log is used by default",
     )
     parser.add_argument(
-        "--path", type=str, default=".", help="specify the directory to search, current directory by default"
+        "--path",
+        type=str,
+        default=".",
+        help="specify the directory to search, current directory by default",
     )
 
     args = parser.parse_args()
