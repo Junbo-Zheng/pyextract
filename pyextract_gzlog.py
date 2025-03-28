@@ -50,13 +50,13 @@ if __name__ == "__main__":
         "--log_file",
         type=str,
         default="tmp.log",
-        help="specify the log file to be merged. tmp.log is used by default",
+        help="specify the log file to be merged, tmp.log is used by default",
     )
     parser.add_argument(
         "--output_file",
         type=str,
         default="output.log",
-        help="specify the name of the output file. output.log is used by default",
+        help="specify the name of the output file, output.log is used by default",
     )
     parser.add_argument(
         "--path",
