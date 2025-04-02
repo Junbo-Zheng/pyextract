@@ -311,7 +311,7 @@ class LogTools:
     # merge all file to a new file
     def merge_logfiles(self):
         file_list = os.listdir(self.log_dir_path)
-        file_list.sort()
+        file_list.sort(key=lambda name: (len(name), name))
         print(Highlight.Convert("merge") + " file list %s" % file_list)
 
         if os.path.exists(self.__cli_parser.merge_file):
