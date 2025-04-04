@@ -23,9 +23,18 @@ import os
 import gzip
 import glob
 import re
+import logging as log
+
 
 import argparse
 from enum import IntEnum
+
+
+log.basicConfig(
+    level=log.DEBUG,
+    datefmt="%Y-%m-%d %H:%M:%S",
+    format="%(asctime)-19s.%(msecs)03d %(levelname)-8s %(filename)s %(lineno)-3d %(process)d %(message)s",
+)
 
 
 class DefaultCLIParameters:
@@ -55,8 +64,8 @@ class ShellRunner:
 
 class CLIParametersParser:
     def __init__(self):
-        print("Parameter Number :", len(sys.argv))
-        print("Shell Name       :", str(sys.argv[0]))
+        log.debug("Parameter Number :%d", len(sys.argv))
+        log.debug("Shell Name       :%s", str(sys.argv[0]))
 
         arg_parser = argparse.ArgumentParser(
             description="Extract a file with the suffix `.tar.gz` from the source path or remote path and extract to "
@@ -129,11 +138,11 @@ class CLIParametersParser:
         if self.merge_file is None:
             self.merge_file = os.path.join(os.getcwd(), self.filename[0] + ".log")
 
-        print("output_path      :", self.output_path)
-        print("source_path      :", self.source_path)
-        print("filename         :", self.filename)
-        print("purge_source_file:", self.purge_source_file)
-        print("merge_file       :", self.merge_file)
+        log.debug("output_path      :%s", self.output_path)
+        log.debug("source_path      :%s", self.source_path)
+        log.debug("filename         :%s", self.filename)
+        log.debug("purge_source_file:%s", self.purge_source_file)
+        log.debug("merge_file       :%s", self.merge_file)
 
     def __getattr__(self, item):
         return self.__cli_args.__getattribute__(item)
@@ -159,21 +168,20 @@ class LogTools:
                 % self.__cli_parser.output_path
             )
             if input_str != "Y":
-                print("quit and exit")
+                log.debug("quit and exit")
                 return -1
 
         cmd = "sudo rm -rf " + self.__cli_parser.output_path
-        print(
-            Highlight.Convert("clear")
-            + " exist file %s by command %s" % (self.__cli_parser.output_path, cmd)
-        )
+        log.debug(
+            Highlight.Convert("clear") + " exist file %s by command %s",
+            self.__cli_parser.output_path, cmd)
         return ShellRunner.command_run(cmd, self.__cli_parser.password)
 
     def pull_packet(self):
         if self.__cli_parser.source_path[0] == "phone":
             self.__cli_parser.source_path[0] = DefaultCLIParameters.remote_path
             adb_cmd = "adb pull " + self.__cli_parser.source_path[0] + " " + "./"
-            print(adb_cmd)
+            log.debug(adb_cmd)
             ShellRunner.command_run(adb_cmd)
 
             file = (
@@ -197,10 +205,9 @@ class LogTools:
         if len(result) == 0:
             return -1
 
-        print(
-            Highlight.Convert("pull")
-            + " %s from %s" % (result, self.__cli_parser.source_path[0])
-        )
+        log.debug(
+            Highlight.Convert("pull") + " %s from %s",
+            result, self.__cli_parser.source_path[0])
 
         if len(result) > 1:
             index = input("Please input the file index you want to extract:\n")
@@ -213,17 +220,17 @@ class LogTools:
         output = os.path.join(path, output)
 
         if self.__cli_parser.purge_source_file:
-            print("rename to %s" % output)
+            log.debug("rename to %s", output)
             os.rename(file, output)
         else:
-            print("copy to %s" % output)
+            log.debug("copy to %s", output)
             shutil.copyfile(file, output)
 
         if output is None:
-            print("not found file packet")
+            log.debug("not found file packet")
             return -1
         self.log_packet_path = output
-        print("output file %s" % self.log_packet_path)
+        log.debug("output file %s", self.log_packet_path)
 
         return 0
 
@@ -263,7 +270,7 @@ class LogTools:
                 gzip_file = gzip.GzipFile(self.log_dir_path + "/" + file)
                 with open(os.path.join(self.log_dir_path, filename), "wb+") as f:
                     f.write(gzip_file.read())
-        print("\n" + Highlight.Convert("gunzip") + " all finish")
+        log.debug("\n" + Highlight.Convert("gunzip") + " all finish")
         return 0
 
     def extract_special_files(self):
@@ -285,12 +292,12 @@ class LogTools:
             os.makedirs(self.__cli_parser.output_path)
 
         cmd = "gzip -d " + self.log_packet_path
-        print(Highlight.Convert("gzip") + " by command " + cmd)
+        log.debug(Highlight.Convert("gzip") + " by command " + cmd)
         ShellRunner.command_run(cmd)
 
         tar_package = self.log_packet_path.replace(".gz", "")
         cmd = "tar -xvf " + tar_package + " -C " + self.__cli_parser.output_path
-        print(Highlight.Convert("tar") + " by command " + cmd)
+        log.debug(Highlight.Convert("tar") + " by command " + cmd)
         if ShellRunner.command_run(cmd) != 0:
             return -1
 
@@ -316,10 +323,10 @@ class LogTools:
     def merge_logfiles(self):
         file_list = os.listdir(self.log_dir_path)
         file_list.sort(key=lambda name: (len(name), name))
-        print(Highlight.Convert("merge") + " file list %s" % file_list)
+        log.debug(Highlight.Convert("merge") + " file list %s", file_list)
 
         if os.path.exists(self.__cli_parser.merge_file):
-            print("merge file exist, will remove")
+            log.debug("merge file exist, will remove")
             os.remove(self.__cli_parser.merge_file)
 
         cmd = "cat "
@@ -329,13 +336,13 @@ class LogTools:
             cmd += os.path.join(self.log_dir_path, file) + " "
 
         cmd += ">" + " " + self.__cli_parser.merge_file
-        print("merge file by command %s" % cmd)
+        log.debug("merge file by command %s", cmd)
         return ShellRunner.command_run(cmd)
 
 
 def CHECK_ERROR_EXIT(ret):
     if ret != 0:
-        print(Highlight.Convert("failure", Highlight.RED))
+        log.debug(Highlight.Convert("failure", Highlight.RED))
         exit(ret)
 
 
@@ -374,4 +381,4 @@ if __name__ == "__main__":
     if logtools.merge_logfiles() == 0:
         logtools.clear_output_dir(False)
 
-    print(Highlight.Convert("Successful", Highlight.GREEN))
+    log.debug(Highlight.Convert("Successful", Highlight.GREEN))
