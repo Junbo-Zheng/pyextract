@@ -276,10 +276,8 @@ class LogTools:
         for special_file in special_files:
             print("  ->", special_file)
             des_path = os.path.join(os.getcwd(), os.path.basename(special_file))
-            copy_cmd = f"cp {special_file} {des_path}"
             print(f"Copying {special_file} to {des_path}")
-            os.system(copy_cmd)
-
+            shutil.copy(special_file, des_path)
         return 0
 
     def extract_packet(self):
