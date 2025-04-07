@@ -172,9 +172,11 @@ class LogTools:
                 return -1
 
         cmd = "sudo rm -rf " + self.__cli_parser.output_path
+        # fmt: off
         log.debug(
             Highlight.Convert("clear") + " exist file %s by command %s",
             self.__cli_parser.output_path, cmd)
+        # fmt: on
         return ShellRunner.command_run(cmd, self.__cli_parser.password)
 
     def pull_packet(self):
@@ -205,9 +207,11 @@ class LogTools:
         if len(result) == 0:
             return -1
 
+        # fmt: off
         log.debug(
             Highlight.Convert("pull") + " %s from %s",
             result, self.__cli_parser.source_path[0])
+        # fmt: on
 
         if len(result) > 1:
             index = input("Please input the file index you want to extract:\n")
