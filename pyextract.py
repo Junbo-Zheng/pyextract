@@ -341,8 +341,8 @@ class LogTools:
 
 
 def CHECK_ERROR_EXIT(ret):
-    if ret != 0:
-        log.debug(Highlight.Convert("failure", Highlight.RED))
+    if ret:
+        log.error(Highlight.Convert("failure", Highlight.RED), stack_info=True)
         exit(ret)
 
 
