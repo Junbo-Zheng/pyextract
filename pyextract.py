@@ -36,7 +36,7 @@ class DefaultCLIParameters:
     output_file = "file.tar.gz"
     filter_pattern = "log\\d*|tmp.log"
     tmp_log = "tmp.log"
-    core_prefix = "core-"
+    special_file_prefix = ["core-", "minidump"]
 
 
 class ShellRunner:
@@ -235,13 +235,15 @@ class LogTools:
                     return 0
         return -1
 
-    def __find_coredump(self):
+    def __find_special_files(self):
+        special_files = []
         for root, dirs, files in os.walk(self.log_dir_path):
             for file in files:
-                # find core dump file by prefix "core-" or "Core-"
-                if file.lower().startswith(DefaultCLIParameters.core_prefix.lower()):
-                    return os.path.join(root, file)
-        return None
+                # Check if the file starts with any prefix in special_file_prefix
+                for prefix in DefaultCLIParameters.special_file_prefix:
+                    if file.lower().startswith(prefix.lower()):
+                        special_files.append(os.path.join(root, file))
+        return special_files
 
     def __remove_all_suffix_gz_file__(self):
         for root, dirs, files in os.walk(self.log_dir_path):
@@ -264,16 +266,18 @@ class LogTools:
         print("\n" + Highlight.Convert("gunzip") + " all finish")
         return 0
 
-    def extract_coredump(self):
-        coredump = self.__find_coredump()
-        if coredump == None:
-            print("Coredump not found")
+    def extract_special_files(self):
+        special_files = self.__find_special_files()
+        if not special_files:
+            print("No special files found")
             return 0
 
-        print("Coredump found, coredump file -> ", coredump)
-        des_path = os.path.join(os.getcwd())
-        copy_cmd = "cp " + coredump + " " + des_path
-        os.system(copy_cmd)
+        print("Special files found:")
+        for special_file in special_files:
+            print("  ->", special_file)
+            des_path = os.path.join(os.getcwd(), os.path.basename(special_file))
+            print(f"Copying {special_file} to {des_path}")
+            shutil.copy(special_file, des_path)
         return 0
 
     def extract_packet(self):
@@ -363,8 +367,8 @@ if __name__ == "__main__":
     # extract log packet
     CHECK_ERROR_EXIT(logtools.extract_packet())
 
-    # extract coredump file
-    CHECK_ERROR_EXIT(logtools.extract_coredump())
+    # extract special file
+    CHECK_ERROR_EXIT(logtools.extract_special_files())
 
     # merge the log files to one file, then remove output dir
     if logtools.merge_logfiles() == 0:
