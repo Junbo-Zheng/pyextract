@@ -19,9 +19,10 @@
 import glob
 import zipfile
 
+
 def main():
     # Get all zip files in the current directory
-    zip_files = glob.glob('*.zip')
+    zip_files = glob.glob("*.zip")
 
     if not zip_files:
         print("No zip files found")
@@ -33,7 +34,7 @@ def main():
         print(f"Extracting: {zip_file}")
         try:
             # Open the zip file in read mode and extract all contents
-            with zipfile.ZipFile(zip_file, 'r') as zf:
+            with zipfile.ZipFile(zip_file, "r") as zf:
                 zf.extractall()  # Extract to current directory (overwrites existing files)
         except zipfile.BadZipFile:
             print(f"  Error: {zip_file} is not a valid ZIP file")
@@ -43,6 +44,7 @@ def main():
             print(f"  Extraction failed: {str(e)}")
 
     print("Extraction complete!")
+
 
 if __name__ == "__main__":
     main()
