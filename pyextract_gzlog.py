@@ -27,7 +27,6 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
             for file in files:
                 if file.endswith(".gz"):
                     gz_file_path = os.path.join(root, file)
-                    new_file_path = os.path.join(root, file[:-3])
 
                     with gzip.open(gz_file_path, "rb") as f_in:
                         decompressed_data = f_in.read()
