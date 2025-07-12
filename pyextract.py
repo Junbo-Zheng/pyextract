@@ -45,7 +45,7 @@ class DefaultCLIParameters:
     output_file = "file.tar.gz"
     filter_pattern = "log\\d*|tmp.log"
     tmp_log = "tmp.log"
-    special_file_prefix = ["core-", "minidump", "crash.txt"]
+    special_file_prefix = ["core-", "minidump", "crash"]
 
 
 class ShellRunner:
