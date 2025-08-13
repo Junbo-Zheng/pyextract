@@ -12,3 +12,5 @@ merged.log
 # IDE
 .vscode
 .idea
+
+*.history
