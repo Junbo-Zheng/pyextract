@@ -34,9 +34,10 @@ def unzip_gz_files_and_merge(directory, log_file, output_file):
                     merged_file.write(decompressed_data)
                     print(f"file {gz_file_path} unzip and merge successfully......")
 
-        with open(log_file, "rb") as tmp_log:
-            merged_file.write(tmp_log.read())
-            print(f"file {log_file} has been merged...")
+        if os.path.isfile(log_file):
+            with open(log_file, "rb") as tmp_log:
+                merged_file.write(tmp_log.read())
+                print(f"file {log_file} has been merged...")
 
     print(f"Good job! All files has been merge to {output_file} ...")
 
@@ -67,7 +68,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not os.path.isfile(args.log_file):
-        print(f"log file {args.log_file} not exist, please check...")
-        exit(1)
+        print(f"log file {args.log_file} not exist, ignore")
 
     unzip_gz_files_and_merge(args.path, args.log_file, args.output_file)
