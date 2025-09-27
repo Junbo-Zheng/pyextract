@@ -36,6 +36,22 @@ echo "alias pyextract=\'$(pwd)/pyextract.py\'" >> ~/.bashrc
 source ~/.bashrc
 ```
 
+Some useful aliases are provided. You can add them to your shell configuration file (such as `~/.zshrc` or `~/.bashrc`) for quick access:
+
+```bash
+# Unzip the current .zip file (single file only)
+alias zz='python3 $(pwd)/pyextract_unzip.py'
+
+# Unzip all .gz files and merge them
+alias gz='python3 $(pwd)/pyextract_gzlog.py'
+
+# Unzip all .tar.gz files
+alias tz='python3 $(pwd)/pyextract_targz.py'
+```
+
+After adding these aliases, restart your terminal or run `source ~/.zshrc` (or `source ~/.bashrc`) to activate them.
+You can then use `zz`, `gz`, or `tz` directly in your terminal for fast extraction operations.
+
 # Usage
 
 ```Python
