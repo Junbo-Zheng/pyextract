@@ -1,12 +1,12 @@
 # Python Extract `tar.gz` Files
 
-Extracted file with the suffix `tar.gz` from the **local path** or **remote path** to **output_path**. Also, all the suffix with `.gz` files will be unzipped at the same time.
+`pyextract` is a Python tool for extracting files with the `.tar.gz` suffix from either **local** or **remote** paths to a specified output directory. It also supports extracting all `.gz` files at the same time.
 
-**One more things**, `pyextract` supports merge all extracted files into one new file. By default, the name of merged file is `self.filename.log` with python `arg_parser`, just change with the `--merge_file` or `-m` option as you wish.
+**Additionally**, `pyextract` can merge all extracted files into a single new file. By default, the merged file is named `self.filename.log`, but you can customize the name using the `--merge_file` or `-m` option.
 
-For example, a compressed package with the suffix `tar.gz`(named `123456_abc.tar.gz`) that stores the other compressed packages and files, as follows:
+For example, consider a compressed package named `123456_abc.tar.gz` containing other compressed files and logs:
 
-```Shell
+```shell
 .
 └── log
     └── file
@@ -17,26 +17,32 @@ For example, a compressed package with the suffix `tar.gz`(named `123456_abc.tar
         └── tmp.log
 ```
 
-Additionally, the files in the `.tar.gz` package are compressed packages with `.gz` as the suffix, and include a specific file, used to help us find the path where the `.gz` file located. We assume it is called `tmp.log`, which is free and you can modify it according to you want.
+Inside the `.tar.gz` package, you may find multiple `.gz` files and a specific log file (e.g., `tmp.log`) to help locate the `.gz` files. You can freely modify the log file name as needed.
 
 # Getting Started
-Clone the repo to local
-```Shell
+
+Clone the repository to your local machine:
+
+```shell
 git clone https://github.com/Junbo-Zheng/pyextract
 ```
-## set alias to local bash
-- zsh
-```Shell
-echo "alias pyextract=\'$(pwd)/pyextract.py\'" >> ~/.zshrc
-source ~/.zshrc
-```
-- bash
-```Shell
-echo "alias pyextract=\'$(pwd)/pyextract.py\'" >> ~/.bashrc
-source ~/.bashrc
-```
 
-Some useful aliases are provided. You can add them to your shell configuration file (such as `~/.zshrc` or `~/.bashrc`) for quick access:
+## Set Alias for Quick Access
+
+Add the following alias to your shell configuration file for easier usage:
+
+- For zsh:
+    ```shell
+    echo "alias pyextract='python3 $(pwd)/pyextract.py'" >> ~/.zshrc
+    source ~/.zshrc
+    ```
+- For bash:
+    ```shell
+    echo "alias pyextract='python3 $(pwd)/pyextract.py'" >> ~/.bashrc
+    source ~/.bashrc
+    ```
+
+Some additional useful aliases are provided. Add them to your shell configuration file (`~/.zshrc` or `~/.bashrc`) for quick access:
 
 ```bash
 # Unzip the current .zip file (single file only)
@@ -54,8 +60,15 @@ You can then use `zz`, `gz`, or `tz` directly in your terminal for fast extracti
 
 # Usage
 
-```Python
-➜  /Users/junbozheng/my/pyextract git:(master) ./pyextract.py --help
+To see all available options, run:
+
+```shell
+./pyextract.py --help
+```
+
+Example output:
+
+```
 Parameter Number : 2
 Shell Name       : ./pyextract.py
 usage: pyextract.py [-h] [-o OUTPUT_PATH [OUTPUT_PATH ...]] [-P [PASSWORD]] -s SOURCE_PATH [SOURCE_PATH ...] [-m [MERGE_FILE]] -f FILENAME [-p] [-F FILTER_PATTERN]
@@ -65,58 +78,59 @@ Extract a file with the suffix `.tar.gz` from the source path or remote path and
 options:
   -h, --help            show this help message and exit
   -o OUTPUT_PATH [OUTPUT_PATH ...], --output_path OUTPUT_PATH [OUTPUT_PATH ...]
-                        extract packet output path
+                        Output path for extracted files
   -P [PASSWORD], --password [PASSWORD]
-                        extract packet and chmod with user password
+                        Password for extraction and chmod
   -s SOURCE_PATH [SOURCE_PATH ...], --source_path SOURCE_PATH [SOURCE_PATH ...]
-                        extract packet from source path
+                        Source path(s) for extraction
   -m [MERGE_FILE], --merge_file [MERGE_FILE]
-                        extract packet and merge to a new file
+                        Merge extracted files into a new file
   -f FILENAME, --filename FILENAME
-                        extract packet filename, the default file suffix is .tar.gz, such as: log.tar.gz
+                        Filename to extract (default suffix is .tar.gz, e.g., log.tar.gz)
   -p, --purge_source_file
-                        purge source file if is true
+                        Delete source file after extraction
   -F FILTER_PATTERN, --filter_pattern FILTER_PATTERN
-                        filter the files to be merged
+                        Filter pattern for files to be merged
 ```
 
-There are two ways that supported to extract files:
+## Supported Extraction Methods
 
-```Shell
+You can extract files from both local and remote sources:
+
+```shell
 +------------------------+---------------------+
-+        Android         +   -----------+      |
-+         Phone          +              |      |
-+  /sdcard/Android/data  +              |      |
+|        Android         |   -----------+      |
+|         Phone          |              |      |
+|  /sdcard/Android/data  |              |      |
 +------------------------+             \|/     |
                                                |
                                               \|/    pyextract.py
                                                +-------------------> local output path
                                               /|\                  (./file path by default)
 +----------------------+               /|\     |
-+       Ubuntu         +                |      |
-+        20.04         +                |      |
-+  /home/mi/downloads  +     -----------+      |
+|       Ubuntu         |                |      |
+|        22.04         |                |      |
+|  /home/mi/downloads  |     -----------+      |
 +----------------------+-----------------------+
 ```
 
-- **Ubuntu 20.04 LTS** local path with the `filename` and the suffix is `.tar.gz`. In this case, you can type
+- **Ubuntu 22.04 LTS**: To extract a `.tar.gz` file from a local path, run:
 
-    ```Python
+    ```shell
     ./pyextract.py --password 1234 --filename 123456_abc --source_path /Users/junbozheng/test
     ```
 
-    When we have already downloaded the file we want to extract in advance, we can quickly extract it through `pyextract`.
+    If you have already downloaded the file, you can quickly extract it using `pyextract`.
 
-- **Android phone** path with the `filename` and the suffix is `.tar.gz`. In this case, you can type
+- **Android Phone**: To extract a `.tar.gz` file from your phone, run:
 
-    ```Python
+    ```shell
     ./pyextract.py --password 1234 --filename 123456_abc --source_path phone
     ```
 
-    `pyextract` will use `adb pull` command to pull files from the **remote_path** to local and extract.
-
-    When some files are stored on phone, we can pull them and extract them quickly with `pyextract`. In advance, our computer already connected to our phone through USB or the other ways.
+    `pyextract` will use the `adb pull` command to transfer files from your phone to your local machine and then extract them.
+    Make sure your computer is connected to your phone via USB or other methods before running the command.
 
 # License
 
-[pyextract](https://github.com/Junbo-Zheng/pyextract) is licensed under the Apache license, check the [LICENSE](./LICENSE) file.
+[pyextract](https://github.com/Junbo-Zheng/pyextract) is licensed under the Apache License. See the [LICENSE](./LICENSE) file for details.
