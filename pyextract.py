@@ -280,14 +280,14 @@ class LogTools:
     def extract_special_files(self):
         special_files = self.__find_special_files()
         if not special_files:
-            print("No special files found")
+            log.debug("No special files found")
             return 0
 
-        print("Special files found:")
+        log.debug("Special files found:")
         for special_file in special_files:
-            print("  ->", special_file)
+            log.debug(f"  -> {special_file}")
             des_path = os.path.join(os.getcwd(), os.path.basename(special_file))
-            print(f"Copying {special_file} to {des_path}")
+            log.debug(f"Copying {special_file} to {des_path}")
             shutil.copy(special_file, des_path)
         return 0
 
