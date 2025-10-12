@@ -33,3 +33,6 @@ jobs:
 
       - name: Run check
         run: cat 123.log
+
+      - name: Run md5sum
+        run: md5sum 123.md5
