@@ -21,7 +21,7 @@ import gzip
 import argparse
 
 
-def unzip_gz_files_and_merge(directory, log_file, output_file):
+def main(directory, log_file, output_file):
     with open(output_file, "wb") as merged_file:
         for root, dirs, files in os.walk(directory):
             for file in files:
@@ -70,4 +70,4 @@ if __name__ == "__main__":
     if not os.path.isfile(args.log_file):
         print(f"log file {args.log_file} not exist, ignore")
 
-    unzip_gz_files_and_merge(args.path, args.log_file, args.output_file)
+    main(args.path, args.log_file, args.output_file)
