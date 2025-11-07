@@ -34,6 +34,9 @@ jobs:
       - name: Run pyextract_targz.py test
         run: ./pyextract_targz.py
 
+      - name: Run pyextract_gzlog.py test
+        run: ./pyextract_gzlog.py --path log/offlinelog
+
       - name: Run check
         run: cat 123.log
 
