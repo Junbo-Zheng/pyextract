@@ -28,7 +28,7 @@ jobs:
       - name: Run black
         run: black --check --diff .
 
-      - name: Run test
+      - name: Run pyextract.py test
         run: ./pyextract.py -s . --filename 123
 
       - name: Run check
