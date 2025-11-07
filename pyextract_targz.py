@@ -21,7 +21,7 @@ import glob
 import subprocess
 
 
-def extract_tar_gz():
+def main():
     current_dir = os.getcwd()
     tar_gz_files = glob.glob(os.path.join(current_dir, "*.tar.gz"))
 
@@ -46,14 +46,22 @@ def extract_tar_gz():
             )
             if result.stdout:
                 print(result.stdout)
-            print(f"✓ extract success: {file_name}")
+            print(f"extract success: {file_name}")
+
         except subprocess.CalledProcessError as e:
-            print(f"✗ extract failed: {file_name}")
-            print(f"error message: {e.stderr}")
-            print(f"return code: {e.returncode}")
-            if "Permission denied" in e.stderr:
-                print("hint: please use 'sudo' to run this script")
+            if e.returncode == 2 and any(
+                warning in e.stderr
+                for warning in [
+                    "Removing leading `/' from member names",
+                    "decompression OK, trailing garbage ignored",
+                ]
+            ):
+                print("extract success with warning, just ignored")
+            else:
+                print(f"✗ extract failed: {file_name}")
+                print(f"error message: {e.stderr}")
+                print(f"return code: {e.returncode}")
 
 
 if __name__ == "__main__":
-    extract_tar_gz()
+    main()
